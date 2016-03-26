@@ -1,8 +1,8 @@
 {-# LANGUAGE CPP #-}
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 module Orphans where
-import           Data.Thyme.Time
-import           Data.Yaml
+import Data.Thyme.Time
+import Data.Yaml
 
 #define deriveShowJSON(X) \
   instance ToJSON X where { toJSON = toJSON . show }; \
