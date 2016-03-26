@@ -1,14 +1,14 @@
-{-# LANGUAGE DeriveGeneric  #-}
 {-# LANGUAGE DeriveAnyClass #-}
+{-# LANGUAGE DeriveGeneric  #-}
 module Main where
 import qualified Data.ByteString.Char8 as B
 import           Data.Maybe
 import           Data.Thyme.Time
 import           Data.Yaml
 import           GHC.Generics          (Generic)
+import           Orphans               ()
 import           System.Directory      (doesFileExist)
 import           System.Environment    (getArgs)
-import           Orphans ()
 
 data Shift = Shift
   { start    :: !LocalTime
