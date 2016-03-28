@@ -2,12 +2,14 @@
 {-# LANGUAGE DeriveGeneric  #-}
 module Main where
 import qualified Data.ByteString.Char8 as B
+import           Data.Fixed            (E2, Fixed)
+import           Data.List             (isSuffixOf)
 import           Data.Maybe
 import           Data.Thyme.Time
 import           Data.Yaml
 import           GHC.Generics          (Generic)
 import           Orphans               ()
-import           System.Directory      (doesFileExist)
+import           System.Directory      (doesFileExist, getDirectoryContents)
 import           System.Environment    (getArgs)
 
 data Shift = Shift
@@ -83,8 +85,13 @@ main = do
   now  <- getCurrentTime
   ts   <- timesheet
   case args of
-    ["start"] -> either error saveTimesheet (startWork now ts)
-    ["stop"]  -> either error saveTimesheet (stopWork now ts)
-    _         -> error "Usage: timesheet start|stop"
-
+    ["start"]       -> either error saveTimesheet (startWork now ts)
+    ["stop"]        -> either error saveTimesheet (stopWork now ts)
+    ["calc", rate'] -> do
+      files  <- getDirectoryContents "."
+      sheets <- mapM readTimesheet (filter (".yaml" `isSuffixOf`) files)
+      let worked = sum [toSeconds' (timeWorked t) | Just t <- sheets]
+          rate   = toRational (read rate' :: Fixed E2)
+      print (fromRational (worked*rate/(60*60)) :: Fixed E2)
+    _ -> error "Usage: timesheet start|stop|(calc n)"
 
